@@ -1,3 +1,4 @@
+# Aaron Chan
 # start modules
 import pgzrun
 import sys
@@ -5,6 +6,8 @@ import sys
 # create constants
 WIDTH = 800
 HEIGHT = 600
+score = 0
+gameOver = False
 
 # print welcome
 print('Welcome!\nThis game is about to start!\nClick the mouse to "flap" upwards\nDodge the pipes and the floor\nGood luck and have fun!')
@@ -24,8 +27,10 @@ class Pipes():
     def __init__(self, x, centre, gap):
         self.top = Actor("top")
         self.bottom = Actor("bottom")
-        self.top.y = centre - (150 + gap/2)
-        self.bottom.y = centre + 150 + gap/2
+        self.top.x = x
+        self.bottom.x = x
+        self.top.y = centre - (300 + gap/2)
+        self.bottom.y = centre + 300 + gap/2
 pipelist = [
     Pipes(266, 400, 220),
     Pipes(532, 180, 220),
@@ -45,17 +50,34 @@ def draw():
 
 # update everything
 def update():
+    global score
+    global gameOver
     # update bird
     bird.y = bird.y + 1
 
     # update pipes
+    for pipe in pipelist:
+        pipe.top.x -= 1
+        pipe.bottom.x -= 1
+        if pipe.top.x < -44:
+            pipe.top.x = 844
+            pipe.bottom.x = 844
+            if not gameOver:
+                score += 1
 
     # bird hits bottom of screen
     if bird.y > 600:
         print("Game Over!")
-        sys.exit()
+        print(f"Score: {score}")
+        gameOver = True
 
     # bird hits pipes
+    for pipe in pipelist:
+        for part in [pipe.top, pipe.bottom]:
+            if part.colliderect(bird):
+                print("Game Over!")
+                print(f"Score: {score}")
+                gameOver = True
 
 # moving
 def on_mouse_down():
