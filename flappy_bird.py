@@ -25,19 +25,20 @@ bird.y = 300
 
 # make pipes
 class Pipes():
-    def __init__(self, x, centre, gap):
-        gap = randint(160, 260)
-        centre = randint(int(-250 + 300 + gap/2), int(850 - (300 + gap/2)))
+    def __init__(self, x):
+        gap = randint(80, 130)
+        centre = randint(int(-250 + 300 + gap), int(850 - (300 + gap)))
         self.top = Actor("top")
         self.bottom = Actor("bottom")
         self.top.x = x
         self.bottom.x = x
-        self.top.y = centre - (300 + gap/2)
-        self.bottom.y = centre + 300 + gap/2
+        self.top.y = centre - (300 + gap)
+        self.bottom.y = centre + 300 + gap
 pipelist = [
-    Pipes(266, 400, 220),
-    Pipes(532, 180, 220),
-    Pipes(798, 415, 220)
+    Pipes(666),
+    Pipes(932),
+    Pipes(1198), 
+    Pipes(1464)
 ]
 
 def drawPipe(self):
@@ -60,19 +61,20 @@ def draw():
         for pipe in pipelist:
             drawPipe(pipe)
     # draw score
-        screen.draw.text(f"Score: {score}", topleft = (0, 0), color = (0, 0, 0), fontsize = 30)
+        screen.draw.text(f"Score: {score}", topleft = (10, 10), color = (0, 0, 0), fontsize = 30)
 
 def updatePipe(self, bird):
     global score, gameOver
-    self.top.x -= 1
-    self.bottom.x -= 1
+    self.top.x -= 2
+    self.bottom.x -= 2
     if self.top.x < -44:
-        self.top.x = 844
-        self.bottom.x = 844
-        gap = randint(160, 260)
-        centre = randint(int(-250 + 300 + gap/2), int(850 - (300 + gap/2)))
-        self.top.y = centre - (300 + gap/2)
-        self.bottom.y = centre + 300 + gap/2
+        self.top.x = 1020
+        self.bottom.x = 1020
+        gap = randint(80, 130)
+        centre = randint(int(-250 + 300 + gap), int(850 - (300 + gap)))
+        self.top.y = centre - (300 + gap)
+        self.bottom.y = centre + 300 + gap
+    if self.top.x == 160:
         if not gameOver:
             score += 1
     # bird hits pipes
@@ -85,14 +87,14 @@ def updatePipe(self, bird):
 def update():
     global score, gameOver
     # update bird
-    bird.y = bird.y + 1
+    bird.y = bird.y + 2
 
     # update pipes
     for pipe in pipelist:
         updatePipe(pipe, bird)
 
     # bird hits bottom of screen
-    if bird.y > 600:
+    if not 0 < bird.y < 600:
         gameOver = True
 
 # moving
