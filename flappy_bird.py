@@ -8,13 +8,14 @@ from random import *
 WIDTH = 800
 HEIGHT = 600
 score = 0
+high = int(open("highscore.txt").read())
 gameOver = False
 
 # print welcome
 print('Welcome!\nThis game is about to start!\nClick the mouse to "flap" upwards\nDodge the pipes and the floor\nGood luck and have fun!')
 
 # make background
-background = Actor("bg")
+background = Actor("day")
 background.x = 400
 background.y = 300
 
@@ -51,8 +52,9 @@ def draw():
         # draw background
         screen.fill((194, 0, 0))
         # draw text
-        screen.draw.text("Game Over!", center = (400, 275), fontsize = 60)
-        screen.draw.text(f"Score: {score}", center = (400, 325), fontsize = 40)
+        screen.draw.text("Game Over!", center = (400, 250), fontsize = 60)
+        screen.draw.text(f"Score: {score}", center = (400, 300), fontsize = 40)
+        screen.draw.text(f"High Score: {high}", center = (400, 350), fontsize = 40)
     else:
     # draw background
         background.draw()
@@ -94,8 +96,10 @@ def update():
         updatePipe(pipe, bird)
 
     # bird hits bottom of screen
-    if not 0 < bird.y < 600:
+    if bird.y > 600:
         gameOver = True
+    elif bird.y < 0:
+        bird.y = 0
 
 # moving
 def on_mouse_down():
