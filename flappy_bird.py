@@ -1,12 +1,12 @@
 # Aaron Chan
 # start modules
-import pgzrun
-import sys
+import pgzrun, sys
 from random import *
 
 # create constants
 WIDTH = 800
 HEIGHT = 600
+tick = 0
 score = 0
 high = int(open("highscore.txt").read())
 gameOver = False
@@ -20,7 +20,7 @@ background.x = 400
 background.y = 300
 
 # make bird
-bird = Actor("bird")
+bird = Actor("bird_wingsup")
 bird.x = 160
 bird.y = 300
 
@@ -91,10 +91,14 @@ def updatePipe(self, bird):
 
 # update everything
 def update():
-    global score, gameOver
+    global score, gameOver, tick
+    tick += 1
+    if tick == 29:
+        tick = 0
     # update bird
     bird.y = bird.y + 2
-
+    if tick == 7 or tick == 14 or tick == 21 or tick == 28:
+        bird.image = "bird" + str(int(tick/7))
     # update pipes
     for pipe in pipelist:
         updatePipe(pipe, bird)
