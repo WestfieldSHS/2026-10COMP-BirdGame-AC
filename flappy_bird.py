@@ -83,6 +83,7 @@ def updatePipe(self, bird):
                 high = score
                 with open("highscore.txt", "w") as f:
                     f.write(str(high))
+
     # bird hits pipes
     for pipe in pipelist:
         for part in [pipe.top, pipe.bottom]:
@@ -95,10 +96,12 @@ def update():
     tick += 1
     if tick == 29:
         tick = 0
+
     # update bird
     bird.y = bird.y + 2
     if tick == 7 or tick == 14 or tick == 21 or tick == 28:
         bird.image = "bird" + str(int(tick/7))
+
     # update pipes
     for pipe in pipelist:
         updatePipe(pipe, bird)
