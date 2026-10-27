@@ -63,10 +63,10 @@ def draw():
         for pipe in pipelist:
             drawPipe(pipe)
     # draw score
-        screen.draw.text(f"Score: {score}", topleft = (10, 10), color = (0, 0, 0), fontsize = 30)
+        screen.draw.text(f"{score}", center = (400, 40), color = (255, 255, 255), fontsize = 80)
 
 def updatePipe(self, bird):
-    global score, gameOver
+    global score, gameOver, high
     self.top.x -= 2
     self.bottom.x -= 2
     if self.top.x < -44:
@@ -79,6 +79,10 @@ def updatePipe(self, bird):
     if self.top.x == 160:
         if not gameOver:
             score += 1
+            if high < score:
+                high = score
+                with open("highscore.txt", "w") as f:
+                    f.write(str(high))
     # bird hits pipes
     for pipe in pipelist:
         for part in [pipe.top, pipe.bottom]:
