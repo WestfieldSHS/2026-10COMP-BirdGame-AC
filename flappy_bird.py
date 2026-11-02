@@ -9,7 +9,7 @@ HEIGHT = 600
 tick = 0
 score = 0
 high = int(open("highscore.txt").read())
-gameOver = False
+status = "menu"
 
 # print welcome
 print('Welcome!\nThis game is about to start!\nClick the mouse to "flap" upwards\nDodge the pipes and the floor\nGood luck and have fun!')
@@ -19,8 +19,13 @@ background = Actor("day")
 background.x = 400
 background.y = 300
 
+# make title
+title = Actor("logo")
+title.x = 400
+title.y = 200
+
 # make bird
-bird = Actor("bird_wingsup")
+bird = Actor("bird1")
 bird.x = 160
 bird.y = 300
 
@@ -48,25 +53,32 @@ def drawPipe(self):
 
 # draw everything to screen
 def draw():
-    if gameOver:
+    # draw background
+    background.draw()
+    if status == "menu":
+        # draw title
+        title.draw()
+
+    elif status == "game":
+        # draw characters
+        bird.draw()
+        for pipe in pipelist:
+            drawPipe(pipe)
+
+        # draw score
+        screen.draw.text(f"{score}", center = (400, 60), color = (255, 255, 255), fontname = "pixels", fontsize = 40, owidth = 2)
+
+    else:
         # draw background
         screen.fill((194, 0, 0))
+
         # draw text
         screen.draw.text("Game Over!", center = (400, 250), fontsize = 60)
         screen.draw.text(f"Score: {score}", center = (400, 300), fontsize = 40)
         screen.draw.text(f"High Score: {high}", center = (400, 350), fontsize = 40)
-    else:
-    # draw background
-        background.draw()
-    # draw characters
-        bird.draw()
-        for pipe in pipelist:
-            drawPipe(pipe)
-    # draw score
-        screen.draw.text(f"{score}", center = (400, 40), color = (255, 255, 255), fontsize = 80)
 
 def updatePipe(self, bird):
-    global score, gameOver, high
+    global score, status, high
     self.top.x -= 2
     self.bottom.x -= 2
     if self.top.x < -44:
@@ -77,7 +89,7 @@ def updatePipe(self, bird):
         self.top.y = centre - (300 + gap)
         self.bottom.y = centre + 300 + gap
     if self.top.x == 160:
-        if not gameOver:
+        if status == "game":
             score += 1
             if high < score:
                 high = score
@@ -88,29 +100,32 @@ def updatePipe(self, bird):
     for pipe in pipelist:
         for part in [pipe.top, pipe.bottom]:
             if part.colliderect(bird):
-                gameOver = True
+                status = "over"
 
 # update everything
 def update():
-    global score, gameOver, tick
-    tick += 1
-    if tick == 29:
-        tick = 0
+    global score, status, tick
+    if status == "menu":
+        pass
+    elif status == "game":
+        tick += 1
+        if tick == 29:
+            tick = 1
 
-    # update bird
-    bird.y = bird.y + 2
-    if tick == 7 or tick == 14 or tick == 21 or tick == 28:
-        bird.image = "bird" + str(int(tick/7))
+        # update bird
+        bird.y = bird.y + 2
+        if tick == 7 or tick == 14 or tick == 21 or tick == 28:
+            bird.image = "bird" + str(int(tick/7))
 
-    # update pipes
-    for pipe in pipelist:
-        updatePipe(pipe, bird)
+        # update pipes
+        for pipe in pipelist:
+            updatePipe(pipe, bird)
 
-    # bird hits bottom of screen
-    if bird.y > 600:
-        gameOver = True
-    elif bird.y < 0:
-        bird.y = 0
+        # bird hits bottom of screen
+        if bird.y > 600:
+            status = "over"
+        elif bird.y < 0:
+            bird.y = 0
 
 # moving
 def on_mouse_down():
