@@ -5,8 +5,9 @@ from random import *
 
 # create constants
 WIDTH = 800
-HEIGHT = 600
+HEIGHT = 623
 tick = 0
+birdtick = 0
 score = 0
 high = int(open("highscore.txt").read())
 status = "menu"
@@ -28,6 +29,14 @@ title.y = 200
 bird = Actor("bird1")
 bird.x = 160
 bird.y = 300
+
+# make ground
+ground1 = Actor("ground2")
+ground1.x = 480
+ground1.y = 611.5
+ground2 = Actor("ground2")
+ground2.x = 1440
+ground2.y = 611.5
 
 # make pipes
 class Pipes():
@@ -68,14 +77,15 @@ def draw():
         # draw score
         screen.draw.text(f"{score}", center = (400, 60), color = (255, 255, 255), fontname = "pixels", fontsize = 40, owidth = 2)
 
-    else:
-        # draw background
-        screen.fill((194, 0, 0))
 
+    else:
         # draw text
-        screen.draw.text("Game Over!", center = (400, 250), fontsize = 60)
+        title.draw()
         screen.draw.text(f"Score: {score}", center = (400, 300), fontsize = 40)
         screen.draw.text(f"High Score: {high}", center = (400, 350), fontsize = 40)
+    # draw ground
+    ground1.draw()
+    ground2.draw()
 
 def updatePipe(self, bird):
     global score, status, high
@@ -102,34 +112,53 @@ def updatePipe(self, bird):
             if part.colliderect(bird):
                 status = "over"
 
+def bob(self):
+    global tick
+    if tick < 30:
+        self.y += .5
+    else:
+        self.y -= .5
+
 # update everything
 def update():
-    global score, status, tick
+    global score, status, tick, birdtick
+    tick += 1
+    if tick == 60:
+        tick = 0
+    for ground in [ground1, ground2]:
+        ground.x -= 2
+        if ground.x == -480:
+            ground.x = 1440
     if status == "menu":
-        pass
+        bob(title)
+        bob(bird)
     elif status == "game":
-        tick += 1
-        if tick == 29:
-            tick = 1
+        birdtick += 1
+        if birdtick == 29:
+            birdtick = 1
 
         # update bird
         bird.y = bird.y + 2
-        if tick == 7 or tick == 14 or tick == 21 or tick == 28:
-            bird.image = "bird" + str(int(tick/7))
+        if birdtick == 7 or birdtick == 14 or birdtick == 21 or birdtick == 28:
+            bird.image = "bird" + str(int(birdtick/7))
 
         # update pipes
         for pipe in pipelist:
             updatePipe(pipe, bird)
 
         # bird hits bottom of screen
-        if bird.y > 600:
-            status = "over"
-        elif bird.y < 0:
+        for ground in [ground1, ground2]:
+            if ground.colliderect(bird):
+                status = "over"
+        if bird.y < 0:
             bird.y = 0
 
 # moving
 def on_mouse_down():
+    global status
     bird.y = bird.y - 50
+    if status == "menu":
+        status = "game"
 
 # runs everything
 pgzrun.go()
